@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.simplemobiletools.commons.adapters.MyRecyclerViewAdapter
 import com.simplemobiletools.commons.views.MyRecyclerView
+import com.simplemobiletools.commons.views.bottomactionmenu.BottomActionMenuView
 import com.simplemobiletools.dialer.R
 import com.simplemobiletools.dialer.activities.SimpleActivity
 import com.simplemobiletools.dialer.interfaces.RemoveSpeedDialListener
@@ -22,7 +23,7 @@ class SpeedDialAdapter(
 
     override fun getActionMenuId() = R.menu.cab_delete_only
 
-    override fun prepareActionMode(menu: Menu) {}
+    override fun onBottomActionMenuCreated(view: BottomActionMenuView) {}
 
     override fun actionItemPressed(id: Int) {
         if (selectedKeys.isEmpty()) {
@@ -42,7 +43,6 @@ class SpeedDialAdapter(
 
     override fun getItemKeyPosition(key: Int) = speedDialValues.indexOfFirst { it.hashCode() == key }
 
-    override fun onActionModeCreated() {}
 
     override fun onActionModeDestroyed() {}
 

@@ -15,6 +15,7 @@ import com.simplemobiletools.commons.dialogs.ConfirmationDialog
 import com.simplemobiletools.commons.extensions.*
 import com.simplemobiletools.commons.helpers.*
 import com.simplemobiletools.commons.views.MyRecyclerView
+import com.simplemobiletools.commons.views.bottomactionmenu.BottomActionMenuView
 import com.simplemobiletools.dialer.R
 import com.simplemobiletools.dialer.activities.SimpleActivity
 import com.simplemobiletools.dialer.dialogs.ShowGroupedCallsDialog
@@ -47,22 +48,19 @@ class RecentCallsAdapter(
 
     override fun getActionMenuId() = R.menu.cab_recent_calls
 
-    override fun prepareActionMode(menu: Menu) {
+    override fun onBottomActionMenuCreated(view: BottomActionMenuView) {
         val hasMultipleSIMs = activity.areMultipleSIMsAvailable()
         val selectedItems = getSelectedItems()
         val isOneItemSelected = selectedItems.size == 1
         val selectedNumber = "tel:${getSelectedPhoneNumber()}"
+        view.toggleItemVisibility(R.id.cab_call_sim_1, hasMultipleSIMs && isOneItemSelected)
+        view.toggleItemVisibility(R.id.cab_call_sim_2,hasMultipleSIMs && isOneItemSelected )
+        view.toggleItemVisibility(R.id.cab_remove_default_sim, isOneItemSelected && activity.config.getCustomSIM(selectedNumber) != "")
 
-        menu.apply {
-            findItem(R.id.cab_call_sim_1).isVisible = hasMultipleSIMs && isOneItemSelected
-            findItem(R.id.cab_call_sim_2).isVisible = hasMultipleSIMs && isOneItemSelected
-            findItem(R.id.cab_remove_default_sim).isVisible = isOneItemSelected && activity.config.getCustomSIM(selectedNumber) != ""
-
-            findItem(R.id.cab_block_number).isVisible = isNougatPlus()
-            findItem(R.id.cab_add_number).isVisible = isOneItemSelected
-            findItem(R.id.cab_copy_number).isVisible = isOneItemSelected
-            findItem(R.id.cab_show_call_details).isVisible = isOneItemSelected
-        }
+        view.toggleItemVisibility(R.id.cab_block_number, isNougatPlus())
+        view.toggleItemVisibility(R.id.cab_add_number, isOneItemSelected)
+        view.toggleItemVisibility(R.id.cab_copy_number, isOneItemSelected)
+        view.toggleItemVisibility(R.id.cab_show_call_details, isOneItemSelected)
     }
 
     override fun actionItemPressed(id: Int) {
@@ -91,8 +89,6 @@ class RecentCallsAdapter(
     override fun getItemSelectionKey(position: Int) = recentCalls.getOrNull(position)?.id
 
     override fun getItemKeyPosition(key: Int) = recentCalls.indexOfFirst { it.id == key }
-
-    override fun onActionModeCreated() {}
 
     override fun onActionModeDestroyed() {}
 

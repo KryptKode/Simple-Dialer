@@ -1,2 +1,5 @@
 rootProject.name='Simple-Dialer'
 include ':app'
+include ':commons'
+project(":commons").projectDir = new File("/Users/darthpaul/StudioProjects/krypt/Simple-Commons/commons")
+

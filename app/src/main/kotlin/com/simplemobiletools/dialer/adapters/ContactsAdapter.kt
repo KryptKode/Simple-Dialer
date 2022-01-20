@@ -23,6 +23,7 @@ import com.simplemobiletools.commons.helpers.SimpleContactsHelper
 import com.simplemobiletools.commons.helpers.isOreoPlus
 import com.simplemobiletools.commons.models.SimpleContact
 import com.simplemobiletools.commons.views.MyRecyclerView
+import com.simplemobiletools.commons.views.bottomactionmenu.BottomActionMenuView
 import com.simplemobiletools.dialer.R
 import com.simplemobiletools.dialer.activities.SimpleActivity
 import com.simplemobiletools.dialer.extensions.areMultipleSIMsAvailable
@@ -46,20 +47,18 @@ class ContactsAdapter(
 
     override fun getActionMenuId() = R.menu.cab_contacts
 
-    override fun prepareActionMode(menu: Menu) {
+
+    override fun onBottomActionMenuCreated(view: BottomActionMenuView) {
         val hasMultipleSIMs = activity.areMultipleSIMsAvailable()
         val isOneItemSelected = isOneItemSelected()
         val selectedNumber = "tel:${getSelectedPhoneNumber()}"
+        view.toggleItemVisibility(R.id.cab_call_sim_1, hasMultipleSIMs && isOneItemSelected)
+        view.toggleItemVisibility(R.id.cab_call_sim_2, hasMultipleSIMs && isOneItemSelected)
+        view.toggleItemVisibility(R.id.cab_remove_default_sim, isOneItemSelected && activity.config.getCustomSIM(selectedNumber) != "")
 
-        menu.apply {
-            findItem(R.id.cab_call_sim_1).isVisible = hasMultipleSIMs && isOneItemSelected
-            findItem(R.id.cab_call_sim_2).isVisible = hasMultipleSIMs && isOneItemSelected
-            findItem(R.id.cab_remove_default_sim).isVisible = isOneItemSelected && activity.config.getCustomSIM(selectedNumber) != ""
-
-            findItem(R.id.cab_delete).isVisible = showDeleteButton
-            findItem(R.id.cab_create_shortcut).isVisible = isOneItemSelected && isOreoPlus()
-            findItem(R.id.cab_view_details).isVisible = isOneItemSelected
-        }
+        view.toggleItemVisibility(R.id.cab_delete, showDeleteButton)
+        view.toggleItemVisibility(R.id.cab_create_shortcut, isOneItemSelected && isOreoPlus())
+        view.toggleItemVisibility(R.id.cab_view_details, isOneItemSelected)
     }
 
     override fun actionItemPressed(id: Int) {
@@ -87,7 +86,6 @@ class ContactsAdapter(
 
     override fun getItemKeyPosition(key: Int) = contacts.indexOfFirst { it.rawId == key }
 
-    override fun onActionModeCreated() {}
 
     override fun onActionModeDestroyed() {}
 
